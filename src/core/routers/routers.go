@@ -17,35 +17,36 @@ func (jctx *JarvisContext) Inject(router *RouterConfig) *RouterConfig {
 }
 
 type RouterConfig struct {
+	Group     string
 	Method    string
 	Path      string
 	Handler   func(*fiber.Ctx, *JarvisContext) error
 	jarvisCtx *JarvisContext
 }
 
-func (r *RouterConfig) Register(app *fiber.App) {
+func (r *RouterConfig) Register(reciever fiber.Router) {
 	handler := r.FiberHandler()
 	path := r.Path
 
 	switch r.Method {
 	case fiber.MethodGet:
-		app.Get(path, handler)
+		reciever.Get(path, handler)
 	case fiber.MethodHead:
-		app.Head(path, handler)
+		reciever.Head(path, handler)
 	case fiber.MethodPost:
-		app.Post(path, handler)
+		reciever.Post(path, handler)
 	case fiber.MethodPut:
-		app.Put(path, handler)
+		reciever.Put(path, handler)
 	case fiber.MethodPatch:
-		app.Patch(path, handler)
+		reciever.Patch(path, handler)
 	case fiber.MethodDelete:
-		app.Delete(path, handler)
+		reciever.Delete(path, handler)
 	case fiber.MethodConnect:
-		app.Connect(path, handler)
+		reciever.Connect(path, handler)
 	case fiber.MethodOptions:
-		app.Options(path, handler)
+		reciever.Options(path, handler)
 	case fiber.MethodTrace:
-		app.Trace(path, handler)
+		reciever.Trace(path, handler)
 	}
 }
 
@@ -55,9 +56,23 @@ func (r *RouterConfig) FiberHandler() func(*fiber.Ctx) error {
 	}
 }
 
+func defineRouterGroup(groupName string, routers []*RouterConfig) []*RouterConfig {
+	for _, router := range routers {
+		router.Group = groupName
+	}
+	return routers
+}
+
+// * export all routers here
 func AllRouters() []*RouterConfig {
-	return []*RouterConfig{
-		// * 在此添加路由
+	allRouters := []*RouterConfig{
 		{Method: fiber.MethodGet, Path: "/", Handler: routerPing},
 	}
+
+	larkRouters := defineRouterGroup("lark", []*RouterConfig{
+		// * export all Lark routers - path: "/lark/..."
+	})
+	allRouters = append(allRouters, larkRouters...)
+
+	return allRouters
 }
