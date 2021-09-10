@@ -71,6 +71,7 @@ func AllRouters() []*RouterConfig {
 
 	larkRouters := defineRouterGroup("lark", []*RouterConfig{
 		// * export all Lark routers - path: "/lark/..."
+		{Method: fiber.MethodPost, Path: "/callback", Handler: routerPingLark},
 	})
 	allRouters = append(allRouters, larkRouters...)
 
