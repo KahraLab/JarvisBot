@@ -1,8 +1,10 @@
 package main
 
 import (
-	"jarvis/src/core"
 	"os"
+
+	log "github.com/sirupsen/logrus"
+	"jarvis/src/core"
 
 	_ "github.com/joho/godotenv/autoload"
 )
@@ -10,6 +12,7 @@ import (
 func main() {
 	app, err := core.CreateFiberApp()
 	if err != nil {
+		log.Fatalln(err)
 		return // create Jarvis Fiber App failed, exit
 	}
 
