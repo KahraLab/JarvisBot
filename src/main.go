@@ -1,16 +1,21 @@
 package main
 
 import (
+	"jarvis/src/utils"
 	"os"
 
 	log "github.com/sirupsen/logrus"
-	"jarvis/src/core"
+	"jarvis/src/server"
 
 	_ "github.com/joho/godotenv/autoload"
 )
 
 func main() {
-	app, err := core.CreateFiberApp()
+	// setup logger format
+	log.SetFormatter(new(utils.LogrusFormatter))
+
+	// create a web server with multiple platform sdk
+	app, err := server.CreateFiberApp()
 	if err != nil {
 		log.Fatalln(err)
 		return // create Jarvis Fiber App failed, exit
